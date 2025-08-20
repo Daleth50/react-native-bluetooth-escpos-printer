@@ -2,7 +2,6 @@ buildscript {
     repositories {
         gradlePluginPortal()
         google()
-        maven {url "https://repo.spring.io/plugins-snapshot/"}
         mavenCentral()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
@@ -14,25 +13,33 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:8.7.2'
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 34
+    namespace 'cn.jystudio.bluetooth'
+    compileSdk 34
     buildToolsVersion "34.0.0"
 
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 34
+        minSdk 23
+        targetSdk 34
         versionCode 1
         versionName "1.0"
     }
-    lintOptions {
+    
+    lint {
         abortOnError false
     }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    
     sourceSets {
         main {
             aidl.srcDirs = ['src/main/java']
@@ -41,7 +48,7 @@ android {
 }
 
 repositories {
-    maven {url "https://repo.spring.io/plugins-snapshot/"}
+    google()
     mavenCentral()
     maven {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
@@ -50,11 +57,25 @@ repositories {
     maven {
         url 'https://maven.google.com'
     }
+    maven {
+        url "https://www.jitpack.io"
+    }
+    maven {
+        // Facebook Maven repository for React Native
+        url "https://maven.facebook.com/public"
+    }
+    flatDir {
+        dirs "$rootDir/../node_modules/react-native/android"
+    }
 }
 
 dependencies {
     // compile fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation group: 'com.android.support', name: 'support-v4', version: '27.0.0'
-    implementation "com.google.zxing:core:3.3.0"
+    // React Native dependencies for compilation
+    implementation('com.facebook.react:react-native:0.68.0') {
+        exclude group: 'com.squareup.okio', module: 'okio'
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+    }
+    implementation 'androidx.core:core:1.12.0'
+    implementation 'com.google.zxing:core:3.5.3'
 }
